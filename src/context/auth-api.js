@@ -1,14 +1,15 @@
 "use client";
 
 import { useContext, createContext, useState, useEffect, useMemo } from "react";
-import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from '../lib/firebase.js';
 
 const AuthDataContext = createContext({ user: null });
 const AuthAPIContext = createContext({
     loginWithGithub: () => { },
-    loginWithGoogle: () => { }
+    loginWithGoogle: () => { },
+    signout: () => { }
 });
 
 // LOGIN PROVIDERS
@@ -47,7 +48,15 @@ export const AuthProvider = ({ children }) => {
             });
         };
 
-        return { loginWithGithub, loginWithGoogle };
+        const signout = () => {
+            signOut(auth).then(() => {
+                console.log("Successed...");
+            }).catch((err) => {
+                console.log(err.message);
+            });
+        };
+
+        return { loginWithGithub, loginWithGoogle, signout };
     }, []);
 
     return <AuthAPIContext.Provider value={api}>
