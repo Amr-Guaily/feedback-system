@@ -5,7 +5,7 @@ import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup, signOut } from
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from '../lib/firebase.js';
 
-const AuthDataContext = createContext({ user: null });
+const AuthDataContext = createContext({ user: null, loading: true });
 const AuthAPIContext = createContext({
     loginWithGithub: () => { },
     loginWithGoogle: () => { },
@@ -20,9 +20,19 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    function formatUserData(data) {
+        return {
+            uid: data.uid,
+            email: data?.email,
+            name: data?.displayName,
+            photoUrl: data?.photoURL,
+            provider: data.providerData[0].providerId
+        };
+    }
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setUser(user);
+            user ? setUser(formatUserData(user)) : setUser(null);
             setLoading(false);
         });
 
@@ -31,18 +41,20 @@ export const AuthProvider = ({ children }) => {
 
     const api = useMemo(() => {
         const loginWithGithub = () => {
+            setLoading(true);
             signInWithPopup(auth, GithubProvider).then((res) => {
-                const user = res.user;
-                setUser(user);
+                const userData = formatUserData(res.user);
+                setUser(userData);
             }).catch((err) => {
                 console.log(err.message);
             });
         };
 
         const loginWithGoogle = () => {
+            setLoading(true);
             signInWithPopup(auth, GoogleProvider).then((res) => {
-                const user = res.user;
-                setUser(user);
+                const userData = formatUserData(res.user);
+                setUser(userData);
             }).catch((err) => {
                 console.log(err.message);
             });
@@ -60,8 +72,8 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     return <AuthAPIContext.Provider value={api}>
-        <AuthDataContext.Provider value={user}>
-            {!loading && children}
+        <AuthDataContext.Provider value={{ user, loading }}>
+            {children}
         </AuthDataContext.Provider>
     </AuthAPIContext.Provider>;
 };
