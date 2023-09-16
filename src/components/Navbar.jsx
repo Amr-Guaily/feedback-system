@@ -10,7 +10,7 @@ const Navbar = () => {
     <div>
       <button onClick={loginWithGithub}>Github</button>
       <button onClick={loginWithGoogle}>Google</button>
-      <h1>Hello {user.displayName}</h1>
+      <h1>Hello {user?.displayName}</h1>
     </div>
   );
 };
