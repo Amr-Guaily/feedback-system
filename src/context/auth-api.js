@@ -4,6 +4,11 @@ import { useContext, createContext, useState, useEffect, useMemo } from "react";
 import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from '../lib/firebase.js';
+import { createUser, getUser } from "@/lib/db.js";
+
+// LOGIN PROVIDERS
+const GithubProvider = new GithubAuthProvider();
+const GoogleProvider = new GoogleAuthProvider();
 
 const AuthDataContext = createContext({ user: null, loading: true });
 const AuthAPIContext = createContext({
@@ -11,10 +16,6 @@ const AuthAPIContext = createContext({
     loginWithGoogle: () => { },
     signout: () => { }
 });
-
-// LOGIN PROVIDERS
-const GithubProvider = new GithubAuthProvider();
-const GoogleProvider = new GoogleAuthProvider();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -29,10 +30,25 @@ export const AuthProvider = ({ children }) => {
             provider: data.providerData[0].providerId
         };
     }
+    async function loginHandler(res) {
+        // Save user-data to firestore
+        const { result, error } = await createUser(formatUserData(res.user));
+        if (error) {
+            console.log(`Success Login, but Faild to save user data in firestore: ${error.message}`);
+            return;
+        }
+        setUser(result);
+    }
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            user ? setUser(formatUserData(user)) : setUser(null);
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const { result, error } = await getUser(user.uid);
+                if (error) console.log(`Failed to retrive user data from firestore:${error.message}`);
+                setUser(result);
+            } else {
+                setUser(null);
+            }
             setLoading(false);
         });
 
@@ -42,22 +58,20 @@ export const AuthProvider = ({ children }) => {
     const api = useMemo(() => {
         const loginWithGithub = () => {
             setLoading(true);
-            signInWithPopup(auth, GithubProvider).then((res) => {
-                const userData = formatUserData(res.user);
-                setUser(userData);
-            }).catch((err) => {
-                console.log(err.message);
-            });
+            signInWithPopup(auth, GithubProvider)
+                .then((res) => loginHandler(res))
+                .catch((err) => {
+                    console.log(`Faild login:${err.message}`);
+                });
         };
 
         const loginWithGoogle = () => {
             setLoading(true);
-            signInWithPopup(auth, GoogleProvider).then((res) => {
-                const userData = formatUserData(res.user);
-                setUser(userData);
-            }).catch((err) => {
-                console.log(err.message);
-            });
+            signInWithPopup(auth, GoogleProvider)
+                .then((res) => loginHandler(res))
+                .catch((err) => {
+                    console.log(`Faild login:${err.message}`);
+                });
         };
 
         const signout = () => {
