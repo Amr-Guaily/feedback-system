@@ -3,6 +3,9 @@
 import { useContext, createContext, useState, useEffect, useMemo } from "react";
 import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
+
+import { useRouter } from 'next/navigation';
+
 import { auth } from '../lib/firebase.js';
 import { createUser, getUser } from "@/lib/db.js";
 
@@ -18,6 +21,7 @@ const AuthAPIContext = createContext({
 });
 
 export const AuthProvider = ({ children }) => {
+    const router = useRouter();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -42,13 +46,9 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const { result, error } = await getUser(user.uid);
-                if (error) console.log(`Failed to retrive user data from firestore:${error.message}`);
-                setUser(result);
-            } else {
-                setUser(null);
-            }
+            const { result, error } = await getUser(user.uid);
+            if (error) console.log(`Failed to retrive user data from firestore:${error.message}`);
+            setUser(result || null);
             setLoading(false);
         });
 
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }) => {
 
         const signout = () => {
             signOut(auth).then(() => {
-                console.log("Successed...");
+                router.replace("/");
             }).catch((err) => {
                 console.log(err.message);
             });

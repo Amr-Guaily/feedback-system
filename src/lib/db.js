@@ -31,11 +31,7 @@ export async function getUser(id) {
     let result, error;
     try {
         const docSanp = await getDoc(docRef);
-        if (docSanp.exists()) {
-            result = docSanp.data();
-        } else {
-            return;
-        }
+        if (docSanp.exists()) result = docSanp.data();
     } catch (err) {
         error = err;
     }
