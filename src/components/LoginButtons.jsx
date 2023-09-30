@@ -3,12 +3,10 @@
 import { useAuthData } from '@/context/auth-api';
 import { useAuthAPI } from '@/context/auth-api';
 import { Button, Text, Flex } from '@chakra-ui/react';
-import { GithubIcon, GoogleIcon } from '../styles/icons.js';
+import { GithubIcon, GoogleIcon } from '../styles/icons';
 
 const LoginButtons = () => {
   const { user } = useAuthData();
-
-  console.log(user);
   const { loginWithGithub, loginWithGoogle } = useAuthAPI();
 
   return (
