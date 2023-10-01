@@ -1,9 +1,8 @@
-import { getApps, initializeApp, cert } from 'firebase-admin/app';
-import { GetUsersResult, getAuth } from 'firebase-admin/auth';
+import admin from 'firebase-admin';
 
-if (!getApps().length) {
-    initializeApp({
-        credential: cert({
+if (!admin.apps.length) {
+    admin.initializeApp({
+        credential: admin.credential.cert({
             projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
             clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
             privateKey: process.env.FIREBASE_PRIVATE_KEY
@@ -11,12 +10,6 @@ if (!getApps().length) {
     });
 }
 
-getAuth()
-    .getUser("Fm1tJrHkXuVoB8W51qBVN2TEASE3")
-    .then((userRecord) => {
-        // See the UserRecord reference doc for the contents of userRecord.
-        console.log(userRecord.displayName);
-    })
-    .catch((error) => {
-        console.log('Error fetching user data:', error);
-    });
+export const auth = admin.auth();
+
+export const db = admin.firestore();
