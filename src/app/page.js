@@ -1,7 +1,12 @@
+import DashboardButton from "@/components/DashboardButton";
 import LoginButtons from "@/components/LoginButtons";
 import { Box, Heading, Icon, Text } from "@chakra-ui/react";
 
+import { cookies } from 'next/headers';
+
 export default function Home() {
+  const nextCookies = cookies();
+  const token = nextCookies.get('userToken');
   return (
     <Box as="main" bg="gray.100" mx="auto" px={4}>
       <Box maxW={700} mx="auto" py={14}>
@@ -17,7 +22,7 @@ export default function Home() {
           <Text fontSize="lg" display="inline"> The easiest way to add comments or reviews to your static site. Try it out by leaving a comment below. After the comment is approved, it will display below.</Text>
         </Box>
 
-        <LoginButtons />
+        {token ? <DashboardButton /> : <LoginButtons />}
       </Box>
     </Box>
   );

@@ -1,19 +1,19 @@
 "use client";
 
 import { useContext, createContext, useState, useEffect, useMemo } from "react";
-import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-import { onAuthStateChanged } from "firebase/auth";
-
 import { useRouter } from 'next/navigation';
 
-import { auth } from '../lib/firebase.js';
+import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { createUser, getUser } from "@/lib/db.js";
+import { auth } from '../lib/firebase';
+
+import cookie from 'js-cookie';
 
 // LOGIN PROVIDERS
 const GithubProvider = new GithubAuthProvider();
 const GoogleProvider = new GoogleAuthProvider();
 
-const AuthDataContext = createContext({ user: null, loading: true });
+const AuthDataContext = createContext({ user: null, loading: false });
 const AuthAPIContext = createContext({
     loginWithGithub: () => { },
     loginWithGoogle: () => { },
@@ -21,9 +21,10 @@ const AuthAPIContext = createContext({
 });
 
 export const AuthProvider = ({ children }) => {
-    const router = useRouter();
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
+
+    const router = useRouter();
 
     function formatUserData(data) {
         return {
@@ -34,21 +35,39 @@ export const AuthProvider = ({ children }) => {
             provider: data.providerData[0].providerId
         };
     }
-    async function loginHandler(res) {
-        // Save user-data to firestore
+    async function handleToken() {
+        try {
+            const idToken = await auth.currentUser.getIdToken(true);
+            cookie.set('userToken', idToken, {
+                path: '/',
+                expires: 1,
+                secure: true,
+                sameSite: true,
+            });
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+    async function handleLogin(res) {
         const { result, error } = await createUser(formatUserData(res.user));
+        handleToken();
         if (error) {
             console.log(`Success Login, but Faild to save user data in firestore: ${error.message}`);
             return;
         }
         setUser(result);
+        setLoading(false);
     }
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            const { result, error } = await getUser(user.uid);
-            if (error) console.log(`Failed to retrive user data from firestore:${error.message}`);
-            setUser(result || null);
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+            if (user && cookie.get('userToken')) {
+                const { result, error } = await getUser(user.uid);
+                if (error) console.log(`Failed to retrive user data from firestore:${error.message}`);
+                setUser(result);
+            } else {
+                setUser(null);
+            }
             setLoading(false);
         });
 
@@ -59,7 +78,7 @@ export const AuthProvider = ({ children }) => {
         const loginWithGithub = () => {
             setLoading(true);
             signInWithPopup(auth, GithubProvider)
-                .then((res) => loginHandler(res))
+                .then((res) => handleLogin(res))
                 .catch((err) => {
                     console.log(`Faild login:${err.message}`);
                 });
@@ -68,7 +87,7 @@ export const AuthProvider = ({ children }) => {
         const loginWithGoogle = () => {
             setLoading(true);
             signInWithPopup(auth, GoogleProvider)
-                .then((res) => loginHandler(res))
+                .then((res) => handleLogin(res))
                 .catch((err) => {
                     console.log(`Faild login:${err.message}`);
                 });
@@ -77,6 +96,7 @@ export const AuthProvider = ({ children }) => {
         const signout = () => {
             signOut(auth).then(() => {
                 router.replace("/");
+                cookie.remove('userToken');
             }).catch((err) => {
                 console.log(err.message);
             });

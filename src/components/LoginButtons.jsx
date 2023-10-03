@@ -2,18 +2,20 @@
 
 import { useAuthData } from '@/context/auth-api';
 import { useAuthAPI } from '@/context/auth-api';
-import { Button, Text, Flex } from '@chakra-ui/react';
+import { Button, Text, Flex, Box } from '@chakra-ui/react';
 import { GithubIcon, GoogleIcon } from '../styles/icons';
+import DashboardButton from './DashboardButton';
 
 const LoginButtons = () => {
-  const { user } = useAuthData();
-  const { loginWithGithub, loginWithGoogle } = useAuthAPI();
+  const { user, loading } = useAuthData();
+  const { loginWithGithub, loginWithGoogle, signout } = useAuthAPI();
 
   return (
     <>
       {!user ? (
         <Flex gap={2} alignItems="center" mt={10}>
           <Button
+            isDisabled={loading}
             bg="gray.900"
             color="white"
             fontWeight="medium"
@@ -28,6 +30,7 @@ const LoginButtons = () => {
             <Text ml="6px">Continue With Github</Text>
           </Button>
           <Button
+            isDisabled={loading}
             bg="white"
             color="gray.900"
             variant="outline"
@@ -44,7 +47,7 @@ const LoginButtons = () => {
           </Button>
         </Flex>
       ) : (
-        <Text>Hello: {user.name}</Text>
+        <DashboardButton />
       )}
     </>
   );
