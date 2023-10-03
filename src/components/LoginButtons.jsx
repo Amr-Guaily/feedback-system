@@ -8,12 +8,12 @@ import DashboardButton from './DashboardButton';
 
 const LoginButtons = () => {
   const { user, loading } = useAuthData();
-  const { loginWithGithub, loginWithGoogle, signout } = useAuthAPI();
+  const { loginWithGithub, loginWithGoogle } = useAuthAPI();
 
   return (
     <>
       {!user ? (
-        <Flex gap={2} alignItems="center" mt={10}>
+        <Flex gap={2} alignItems="center">
           <Button
             isDisabled={loading}
             bg="gray.900"

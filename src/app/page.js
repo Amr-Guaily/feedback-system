@@ -8,7 +8,7 @@ export default function Home() {
   const nextCookies = cookies();
   const token = nextCookies.get('userToken');
   return (
-    <Box as="main" bg="gray.100" mx="auto" px={4}>
+    <Box as="main" bg="gray.100" px={4}>
       <Box maxW={700} mx="auto" py={14}>
         <Icon viewBox='0 0 46 32' boxSize={12}>
           <path

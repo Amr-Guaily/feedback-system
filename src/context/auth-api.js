@@ -51,12 +51,12 @@ export const AuthProvider = ({ children }) => {
     async function handleLogin(res) {
         const { result, error } = await createUser(formatUserData(res.user));
         handleToken();
+        setLoading(false);
         if (error) {
             console.log(`Success Login, but Faild to save user data in firestore: ${error.message}`);
             return;
         }
         setUser(result);
-        setLoading(false);
     }
 
     useEffect(() => {
@@ -94,8 +94,8 @@ export const AuthProvider = ({ children }) => {
         };
 
         const signout = () => {
+            router.replace("/");
             signOut(auth).then(() => {
-                router.replace("/");
                 cookie.remove('userToken');
             }).catch((err) => {
                 console.log(err.message);

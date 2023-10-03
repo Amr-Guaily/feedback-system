@@ -1,1 +1,39 @@
+:root {
+  --bar-height: 6px;
+  --secondary-color: #4070f4;
+}
 
+body {
+  min-height: calc(100vh - var(--bar-height));
+  margin-top: var(--bar-height);
+  display: flex;
+  flex-direction: column;
+}
+body::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 6px;
+  top: calc(var(--bar-height) * -1);
+  left: 0;
+  background-color: var(--secondary-color);
+}
+
+.container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.nav-link {
+  position: relative;
+}
+.active-link::before {
+  position: absolute;
+  content: '';
+  width: 100%;
+  height: 1.5px;
+  bottom: -2px;
+  background-color: var(--secondary-color);
+}

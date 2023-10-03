@@ -7,7 +7,7 @@ import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'Feedback Systemm',
+  title: 'Feedback System',
   description: 'The easiest way to add reviews and comments to your static site.',
 };
 
