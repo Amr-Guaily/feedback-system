@@ -48,12 +48,19 @@ export const AuthProvider = ({ children }) => {
             console.log(err.message);
         }
     }
-    async function handleLogin(res) {
-        const { result, error } = await createUser(formatUserData(res.user));
-        setLoading(false);
-        setUser(result);
-
-        if (error) console.log(`Success Login, but Faild to save user data in firestore: ${error.message}`);
+    function handleLogin(provider) {
+        setLoading(true);
+        signInWithPopup(auth, provider)
+            .then(async (res) => {
+                const { result, error } = await createUser(formatUserData(res.user));
+                setUser(result);
+                setLoading(false);
+                if (error) console.log(`Success Login, but Faild to save user data in firestore: ${error.message}`);
+            })
+            .catch((err) => {
+                console.log(`Faild login:${err.message}`);
+                setLoading(false);
+            });
     }
 
     useEffect(() => {
@@ -74,23 +81,11 @@ export const AuthProvider = ({ children }) => {
 
     const api = useMemo(() => {
         const loginWithGithub = () => {
-            setLoading(true);
-            signInWithPopup(auth, GithubProvider)
-                .then((res) => handleLogin(res))
-                .catch((err) => {
-                    console.log(`Faild login:${err.message}`);
-                    setLoading(false);
-                });
+            handleLogin(GithubProvider);
         };
 
         const loginWithGoogle = () => {
-            setLoading(true);
-            signInWithPopup(auth, GoogleProvider)
-                .then((res) => handleLogin(res))
-                .catch((err) => {
-                    console.log(`Faild login:${err.message}`);
-                    setLoading(false);
-                });
+            handleLogin(GoogleProvider);
         };
 
         const signout = () => {
