@@ -50,21 +50,19 @@ export const AuthProvider = ({ children }) => {
     }
     async function handleLogin(res) {
         const { result, error } = await createUser(formatUserData(res.user));
-        handleToken();
         setLoading(false);
-        if (error) {
-            console.log(`Success Login, but Faild to save user data in firestore: ${error.message}`);
-            return;
-        }
         setUser(result);
+
+        if (error) console.log(`Success Login, but Faild to save user data in firestore: ${error.message}`);
     }
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
-            if (user && cookie.get('userToken')) {
+            if (user) {
                 const { result, error } = await getUser(user.uid);
-                if (error) console.log(`Failed to retrive user data from firestore:${error.message}`);
                 setUser(result);
+                handleToken();
+                if (error) console.log(`Failed to retrive user data from firestore:${error.message}`);
             } else {
                 setUser(null);
             }
@@ -81,6 +79,7 @@ export const AuthProvider = ({ children }) => {
                 .then((res) => handleLogin(res))
                 .catch((err) => {
                     console.log(`Faild login:${err.message}`);
+                    setLoading(false);
                 });
         };
 
@@ -100,7 +99,6 @@ export const AuthProvider = ({ children }) => {
                 cookie.remove('userToken');
             }).catch((err) => {
                 console.log(err.message);
-                setLoading(false);
             });
         };
 
