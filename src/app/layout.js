@@ -6,6 +6,7 @@ import Providers from '@/styles/chakra-providers';
 import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 
+import { Box, Flex } from '@chakra-ui/react';
 export const metadata = {
   title: 'Feedback System',
   description: 'The easiest way to add reviews and comments to your static site.',
@@ -14,13 +15,15 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className} suppressHydrationWarning>
+      <Flex as="body" flexDirection="column" minH="100vh" className={inter.className} suppressHydrationWarning>
+        <Box h="6px" bg={'#4070f4'} />
+
         <Providers>
           <AuthProvider>
             {children}
           </AuthProvider>
         </Providers>
-      </body>
+      </Flex>
     </html>
   );
 }

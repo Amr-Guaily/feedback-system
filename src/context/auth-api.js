@@ -90,6 +90,7 @@ export const AuthProvider = ({ children }) => {
                 .then((res) => handleLogin(res))
                 .catch((err) => {
                     console.log(`Faild login:${err.message}`);
+                    setLoading(false);
                 });
         };
 
@@ -99,6 +100,7 @@ export const AuthProvider = ({ children }) => {
                 cookie.remove('userToken');
             }).catch((err) => {
                 console.log(err.message);
+                setLoading(false);
             });
         };
 

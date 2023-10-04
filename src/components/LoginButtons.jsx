@@ -13,7 +13,11 @@ const LoginButtons = () => {
   return (
     <>
       {!user ? (
-        <Flex gap={2} alignItems="center">
+        <Flex
+          flexDirection={{ base: 'column', sm: 'row' }}
+          gap={3}
+          alignItems="center"
+        >
           <Button
             isDisabled={loading}
             bg="gray.900"
