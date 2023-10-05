@@ -3,7 +3,7 @@
 import { useAuthData } from '@/context/auth-api';
 import { useAuthAPI } from '@/context/auth-api';
 import { Button, Text, Flex } from '@chakra-ui/react';
-import { GithubIcon, GoogleIcon } from '../styles/icons';
+import { GithubIcon, GoogleIcon } from '../../styles/icons';
 import DashboardButton from './DashboardButton';
 
 const LoginButtons = () => {

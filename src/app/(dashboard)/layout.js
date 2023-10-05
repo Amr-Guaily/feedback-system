@@ -1,5 +1,5 @@
-import Navbar from "@/components/Navbar";
-import PrivateRoute from "@/components/PrivateRoute";
+import Navbar from "@/components/layout/Navbar";
+import PrivateRoute from "@/components/layout/PrivateRoute";
 import { Box } from "@chakra-ui/react";
 
 export default function Layout({ children }) {

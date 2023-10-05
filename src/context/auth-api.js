@@ -4,7 +4,7 @@ import { useContext, createContext, useState, useEffect, useMemo } from "react";
 import { useRouter } from 'next/navigation';
 
 import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-import { createUser, getUser } from "@/lib/db.js";
+import { createUser, getUser } from "@/utils/db.js";
 import { auth } from '../lib/firebase';
 
 import cookie from 'js-cookie';

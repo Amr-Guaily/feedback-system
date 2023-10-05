@@ -1,4 +1,4 @@
-import { db } from "./firebase";
+import { db } from "../lib/firebase";
 import { collection, setDoc, getDoc, doc } from "firebase/firestore";
 
 // Collections Refs

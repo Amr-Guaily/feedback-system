@@ -1,5 +1,5 @@
-import DashboardButton from "@/components/DashboardButton";
-import LoginButtons from "@/components/LoginButtons";
+import DashboardButton from "@/components/layout/DashboardButton";
+import LoginButtons from "@/components/layout/LoginButtons";
 import { Box, Heading, Icon, Text } from "@chakra-ui/react";
 
 import { cookies } from 'next/headers';
