@@ -7,7 +7,7 @@ export default function Layout({ children }) {
         <PrivateRoute>
             <Navbar />
             <Box as="main" bg="gray.100" flexGrow={1}>
-                <Box className="container">
+                <Box className="container" py={10}>
                     {children}
                 </Box>
             </Box>
