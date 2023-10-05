@@ -48,28 +48,31 @@ export const AuthProvider = ({ children }) => {
             console.log(err.message);
         }
     }
-    function handleLogin(provider) {
+    async function handleLogin(provider) {
         setLoading(true);
-        signInWithPopup(auth, provider)
-            .then(async (res) => {
-                const { result, error } = await createUser(formatUserData(res.user));
-                setUser(result);
-                setLoading(false);
-                if (error) console.log(`Success Login, but Faild to save user data in firestore: ${error.message}`);
-            })
-            .catch((err) => {
-                console.log(`Faild login:${err.message}`);
-                setLoading(false);
+        try {
+            const res = await signInWithPopup(auth, provider);
+            const userData = formatUserData(res.user);
+            setUser(userData);
+
+            // Create user record in the background without waiting..
+            createUser(userData).then(() => {
+                console.log("User record created successfully.");
             });
+
+        } catch (err) {
+            console.log(`Faild login:${err.message}`);
+        } finally {
+            setLoading(false);
+        }
     }
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
             if (user) {
-                const { result, error } = await getUser(user.uid);
-                setUser(result);
+                const userData = formatUserData(user);
+                setUser(userData);
                 handleToken();
-                if (error) console.log(`Failed to retrive user data from firestore:${error.message}`);
             } else {
                 setUser(null);
             }

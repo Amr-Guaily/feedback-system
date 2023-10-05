@@ -12,15 +12,11 @@ export async function createUser(data) {
         status: "active"
     };
 
-    let result, error;
     try {
         await setDoc(doc(usersCollectionRef, data.uid), userData, { merge: true });
-        result = userData;
     } catch (err) {
-        error = err;
+        console.log(`Success Login, but Faild to save user data in firestore: ${err.message}`);
     }
-
-    return { result, error };
 }
 
 export async function getUser(id) {
