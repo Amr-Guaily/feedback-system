@@ -92,8 +92,8 @@ export const AuthProvider = ({ children }) => {
         };
 
         const signout = () => {
-            router.replace("/");
             signOut(auth).then(() => {
+                router.replace("/");
                 cookie.remove('userToken');
             }).catch((err) => {
                 console.log(err.message);
