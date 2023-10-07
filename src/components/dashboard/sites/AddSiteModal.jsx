@@ -16,6 +16,8 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 
+import addSite from '@/actions/addSite';
+
 const AddSiteModal = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -38,7 +40,7 @@ const AddSiteModal = ({ children }) => {
       </Button>
       <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent as="form">
+        <ModalContent action={addSite} as="form">
           <ModalHeader fontWeight="bold">Add Site</ModalHeader>
           <ModalCloseButton />
 
@@ -58,7 +60,12 @@ const AddSiteModal = ({ children }) => {
             <Button onClick={onClose} mr={3} fontWeight="medium">
               Cancel
             </Button>
-            <Button bg="#4070f4" color="white" fontWeight="medium">
+            <Button
+              type="submit"
+              bg="#4070f4"
+              color="white"
+              fontWeight="medium"
+            >
               Create
             </Button>
           </ModalFooter>
