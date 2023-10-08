@@ -47,12 +47,17 @@ const AddSiteModal = ({ children }) => {
           <ModalBody pb={6}>
             <FormControl>
               <FormLabel>Name</FormLabel>
-              <Input ref={initialRef} placeholder="My site" name="name" />
+              <Input
+                ref={initialRef}
+                required
+                placeholder="My site"
+                name="name"
+              />
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Link</FormLabel>
-              <Input placeholder="https://website.com" name="url" />
+              <Input required placeholder="https://website.com" name="url" />
             </FormControl>
           </ModalBody>
 
@@ -65,6 +70,7 @@ const AddSiteModal = ({ children }) => {
               bg="#4070f4"
               color="white"
               fontWeight="medium"
+              _hover={{ bg: '#4070f4', opacity: 0.9 }}
             >
               Create
             </Button>

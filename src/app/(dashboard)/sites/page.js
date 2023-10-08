@@ -1,9 +1,11 @@
-import { Heading, Text } from "@chakra-ui/react";
+import { Flex, Heading, Text } from "@chakra-ui/react";
 
 import { db } from "@/lib/firebase";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 
 import EmptyState from "@/components/dashboard/sites/EmptyState";
+import AddSiteModal from "@/components/dashboard/sites/AddSiteModal";
+import SiteTable from "@/components/dashboard/sites/SiteTable";
 
 export default async function Sites() {
     const sites = [];
@@ -13,11 +15,12 @@ export default async function Sites() {
 
     return (
         <>
-            <Heading as="h1" fontWeight="medium" mb={8}>My Sites</Heading>
-            <EmptyState />
+            <Flex align='center' justify='space-between' mb={8}>
+                <Heading as="h1" fontWeight="medium">My Sites</Heading>
+                {sites.length != 0 && <AddSiteModal >+ Add site</AddSiteModal>}
+            </Flex>
 
-
-            {sites.map(site => <Text>{site.name}</Text>)}
+            {sites.length == 0 ? <EmptyState /> : <SiteTable sites={sites} />}
         </>
     );
 }
