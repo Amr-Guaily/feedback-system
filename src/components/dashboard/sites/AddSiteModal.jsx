@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef } from 'react';
-import { useToast } from '@chakra-ui/react';
 import {
   Button,
   Modal,
@@ -15,6 +14,7 @@ import {
   FormLabel,
   Input,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
 
 import { db } from '@/lib/firebase';

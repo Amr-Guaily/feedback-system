@@ -10,13 +10,30 @@ import {
   AlertDialogBody,
   AlertDialogFooter,
   Button,
+  useToast,
 } from '@chakra-ui/react';
+
+import deleteSite from '@/actions/deleteSite';
 
 const DeleteSiteButton = ({ siteId }) => {
   const [isOpen, setIsOpen] = useState();
   const cancelRef = useRef();
+  const toast = useToast();
 
   const onClose = () => setIsOpen(false);
+
+  async function handleRemoveSite() {
+    const isSuccess = await deleteSite(siteId);
+
+    if (!isSuccess) {
+      toast({
+        description: 'Something went wrong, please try again later.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }
 
   return (
     <>
@@ -66,6 +83,7 @@ const DeleteSiteButton = ({ siteId }) => {
               color="white"
               _hover={{ bg: 'red.500', opacity: 0.9 }}
               ml={3}
+              onClick={() => handleRemoveSite()}
             >
               Delete
             </Button>
