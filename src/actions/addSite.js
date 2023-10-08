@@ -10,14 +10,21 @@ import verifyUserToken from '@/utils/veriftUserToken';
 const sitesCollectonRef = collection(db, 'sites');
 export default async function addSite(formData) {
     const { uid, error } = await verifyUserToken();
-
     if (error) console.log("Invalid Token..");
+
+    const name = formData.get('name'),
+        url = formData.get('url');
+
+    if (isExistUrl) {
+        console.log("Site already exist");
+        return;
+    }
 
     const newSite = {
         authorId: uid,
         createdAt: Timestamp.now().toMillis(),
-        name: formData.get('name'),
-        url: formData.get('url')
+        name,
+        url
     };
 
     try {

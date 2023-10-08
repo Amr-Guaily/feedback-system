@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import { useToast } from '@chakra-ui/react';
 import {
   Button,
   Modal,
@@ -16,12 +17,39 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 
+import { db } from '@/lib/firebase';
+import { collection, where, getDocs } from 'firebase/firestore';
 import addSite from '@/actions/addSite';
 
 const AddSiteModal = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const toast = useToast();
   const initialRef = useRef(null);
+
+  async function checkSite(url) {
+    const querySnapshot = await getDocs(
+      collection(db, 'sites'),
+      where('url', '==', url)
+    );
+
+    return !querySnapshot.empty;
+  }
+
+  async function submitHandler(formData) {
+    const isExistUrl = await checkSite(formData.get('url'));
+
+    if (isExistUrl) {
+      toast({
+        description: 'Site Link is already exist..',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+    await addSite();
+    onClose();
+  }
 
   return (
     <>
@@ -40,7 +68,7 @@ const AddSiteModal = ({ children }) => {
       </Button>
       <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent action={addSite} as="form">
+        <ModalContent action={submitHandler} as="form">
           <ModalHeader fontWeight="bold">Add Site</ModalHeader>
           <ModalCloseButton />
 

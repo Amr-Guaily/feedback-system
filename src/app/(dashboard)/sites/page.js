@@ -1,4 +1,4 @@
-import { Flex, Heading, Text } from "@chakra-ui/react";
+import { Flex, Heading } from "@chakra-ui/react";
 
 import { db } from "@/lib/firebase";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
@@ -11,8 +11,8 @@ export default async function Sites() {
     const sites = [];
 
     const q = query(collection(db, 'sites'), orderBy('createdAt', 'desc'));
-    const querySnapshot = (await getDocs(q));
-    querySnapshot.forEach(doc => sites.push(doc.data()));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach(doc => sites.push({ ...doc.data(), id: doc.id }));
 
     return (
         <>
