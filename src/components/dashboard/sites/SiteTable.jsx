@@ -7,6 +7,10 @@ import { Table, Tr, Th, Td } from './Table';
 
 import DeleteSiteButton from './DeleteSiteButton';
 const SiteTable = ({ sites }) => {
+  function dateFormatter(date) {
+    return new Date(date).toDateString();
+  }
+
   return (
     <Box overflowX="auto">
       <Table w="full">
@@ -39,7 +43,7 @@ const SiteTable = ({ sites }) => {
                   View Feedback
                 </Link>
               </Td>
-              <Td fontSize="sm">{site.createdAt}</Td>
+              <Td fontSize="sm">{dateFormatter(site.createdAt)}</Td>
               <Td>
                 <DeleteSiteButton siteId={site.id} />
               </Td>

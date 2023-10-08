@@ -1,22 +1,21 @@
 'use server';
 
 import { db } from '../lib/firebase';
-import { collection, setDoc, doc } from 'firebase/firestore';
+import { collection, setDoc, doc, Timestamp } from 'firebase/firestore';
 
 import { revalidatePath } from 'next/cache';
 
 import verifyUserToken from '@/utils/veriftUserToken';
 
+const sitesCollectonRef = collection(db, 'sites');
 export default async function addSite(formData) {
-    const sitesCollectonRef = collection(db, 'sites');
-
     const { uid, error } = await verifyUserToken();
 
     if (error) console.log("Invalid Token..");
 
     const newSite = {
         authorId: uid,
-        createdAt: new Date().toDateString(),
+        createdAt: Timestamp.now().toMillis(),
         name: formData.get('name'),
         url: formData.get('url')
     };

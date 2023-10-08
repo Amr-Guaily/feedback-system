@@ -10,8 +10,9 @@ import SiteTable from "@/components/dashboard/sites/SiteTable";
 export default async function Sites() {
     const sites = [];
 
-    const q = query(collection(db, 'sites'), orderBy("name"));
-    const querySnapshot = (await getDocs(q)).forEach(doc => sites.push(doc.data()));
+    const q = query(collection(db, 'sites'), orderBy('createdAt', 'desc'));
+    const querySnapshot = (await getDocs(q));
+    querySnapshot.forEach(doc => sites.push(doc.data()));
 
     return (
         <>
