@@ -18,7 +18,7 @@ import {
 } from '@chakra-ui/react';
 
 import { db } from '@/lib/firebase';
-import { collection, where, getDocs } from 'firebase/firestore';
+import { collection, where, getDocs, query } from 'firebase/firestore';
 import addSite from '@/actions/addSite';
 
 const AddSiteModal = ({ children }) => {
@@ -27,10 +27,8 @@ const AddSiteModal = ({ children }) => {
   const initialRef = useRef(null);
 
   async function checkSite(url) {
-    const querySnapshot = await getDocs(
-      collection(db, 'sites'),
-      where('url', '==', url)
-    );
+    const q = query(collection(db, 'sites'), where('url', '==', url));
+    const querySnapshot = await getDocs(q);
 
     return !querySnapshot.empty;
   }
@@ -47,7 +45,7 @@ const AddSiteModal = ({ children }) => {
       });
       return;
     }
-    await addSite();
+    await addSite(formData);
     onClose();
   }
 

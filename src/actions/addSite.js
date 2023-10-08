@@ -15,11 +15,6 @@ export default async function addSite(formData) {
     const name = formData.get('name'),
         url = formData.get('url');
 
-    if (isExistUrl) {
-        console.log("Site already exist");
-        return;
-    }
-
     const newSite = {
         authorId: uid,
         createdAt: Timestamp.now().toMillis(),
