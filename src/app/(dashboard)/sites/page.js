@@ -1,17 +1,23 @@
 import { Flex, Heading } from "@chakra-ui/react";
 
 import { db } from "@/lib/firebase";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
+
+import verifyUserToken from "@/utils/veriftUserToken";
+import { redirect } from "next/dist/server/api-utils";
 
 import EmptyState from "@/components/dashboard/sites/EmptyState";
 import AddSiteModal from "@/components/dashboard/sites/AddSiteModal";
 import SiteTable from "@/components/dashboard/sites/SiteTable";
 
 export default async function Sites() {
+    const { uid, error } = await verifyUserToken();
+
+    if (error) redirect("/");
     const sites = [];
 
-    const q = query(collection(db, 'sites'), orderBy('createdAt', 'desc'));
-    const querySnapshot = await getDocs(q);
+    const q = query(collection(db, 'sites'), where('authorId', '==', uid));
+    const querySnapshot = await getDocs(q, orderBy('createdAt', 'desc'));
     querySnapshot.forEach(doc => sites.push({ ...doc.data(), id: doc.id }));
 
     return (
