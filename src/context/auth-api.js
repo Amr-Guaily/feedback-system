@@ -1,10 +1,10 @@
 "use client";
 
-import { useContext, createContext, useState, useEffect, useMemo } from "react";
+import { useContext, createContext, useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 
 import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-import { createUser, getUser } from "@/utils/db.js";
+import { createUser } from "@/utils/db.js";
 import { auth } from '../lib/firebase';
 
 import cookie from 'js-cookie';
@@ -82,26 +82,22 @@ export const AuthProvider = ({ children }) => {
         return () => unsubscribe();
     }, []);
 
-    const api = useMemo(() => {
-        const loginWithGithub = () => {
+    const api = {
+        loginWithGithub: () => {
             handleLogin(GithubProvider);
-        };
-
-        const loginWithGoogle = () => {
+        },
+        loginWithGoogle: () => {
             handleLogin(GoogleProvider);
-        };
-
-        const signout = () => {
+        },
+        signout: () => {
             signOut(auth).then(() => {
                 router.replace("/");
                 cookie.remove('userToken');
             }).catch((err) => {
                 console.log(err.message);
             });
-        };
-
-        return { loginWithGithub, loginWithGoogle, signout };
-    }, []);
+        }
+    };
 
     return <AuthAPIContext.Provider value={api}>
         <AuthDataContext.Provider value={{ user, loading }}>
